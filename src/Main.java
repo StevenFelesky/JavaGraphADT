@@ -12,15 +12,19 @@ public class Main {
 
         Node<Integer> node4 = new Node<>(4);
 
+        Node<Integer> node5 = new Node<>(5);
+
         myGraph.addNode(node1);
         myGraph.addNode(node2);
         myGraph.addNode(node3);
         myGraph.addNode(node4);
+        myGraph.addNode(node5);
 
         myGraph.addUnDiEdge(node1, node1);
         myGraph.addUnDiEdge(node1, node2);
         myGraph.addUnDiEdge(node1, node3);
         myGraph.addUnDiEdge(node1, node4);
+        myGraph.addUnDiEdge(node1, node5);
 
         System.out.println(myGraph.toString());
 
