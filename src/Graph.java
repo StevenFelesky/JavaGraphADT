@@ -52,6 +52,14 @@ public class Graph<T> {
         }
     }
 
+    public boolean everyNodeHasAnEdge() {
+        for (Map.Entry<Node<T>, Set<Node<T>>> entry : adjMap.entrySet()) {
+            Set<Node<T>> neighbors = entry.getValue();
+            if (neighbors.isEmpty()) { return false; }
+        }
+        return true;
+    }
+
     public String toString() {
         StringBuilder output = new StringBuilder("Adjacency List Output\n");
         for (Map.Entry<Node<T>, Set<Node<T>>> neighbors : adjMap.entrySet()) {
