@@ -2,44 +2,59 @@ import java.util.*;
 
 public class Graph<T> {
 
-    Map<Node<T>, List<Node<T>>> adjList;
+    Map<Node<T>, Set<Node<T>>> adjMap;
 
     public Graph() {
-        adjList = new HashMap<>();
+        adjMap = new HashMap<>();
     }
 
-    public void addNode(Node<T> node) {
-        if(!adjList.containsKey(node)) {
-            adjList.put(node, new ArrayList<>());
+    public boolean addNode(Node<T> node) {
+        if (!adjMap.containsKey(node)) {
+            adjMap.put(node, new HashSet<>());
+            return true;
         }
+        return false;
     }
 
-    public void addUnDiEdge(Node<T> from, Node<T> to) {
-        if(this.adjList.containsKey(from)) {
-            if(!adjList.get(from).contains(to)) {
-                adjList.get(from).add(to);
-            }
-            if(!adjList.get(to).contains(from)) {
-                adjList.get(to).add(from);
-            }
-        }
-    }
-
-    public void addDiEdge(Node<T> from, Node<T> to) {
-        if(adjList.containsKey(from)) {
-            if(!adjList.get(from).contains(to)) {
-                adjList.get(from).add(to);
+    public boolean addUnDiEdge(Node<T> from, Node<T> to) {
+        if (adjMap.containsKey(from) && adjMap.containsKey(to)) {
+            if(!(adjMap.get(from).contains(to) && adjMap.get(to).contains(from))) {
+                adjMap.get(from).add(to);
+                adjMap.get(to).add(from);
+                return true;
             }
         }
+        return false;
     }
 
-    public void dfs(Graph<T> graph, Node<T> start) {
+    public boolean addDiEdge(Node<T> from, Node<T> to) {
+        if (adjMap.containsKey(from) && adjMap.containsKey(to)) {
+            if(!adjMap.get(from).contains(to)) {
+                adjMap.get(from).add(to);
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public void dfs(Node<T> node) {
+        node.visit();
+        System.out.print(node.toString());
+
+        Set<Node<T>> neighbors = adjMap.get(node);
+
+        if (neighbors == null) { return; }
+
+        for (Node<T> neighbor : neighbors) {
+            if (!neighbor.isVisited()){
+                dfs(neighbor);
+            }
+        }
     }
 
     public String toString() {
         StringBuilder output = new StringBuilder("Adjacency List Output\n");
-        for (Map.Entry<Node<T>, List<Node<T>>> neighbors : adjList.entrySet()) {
+        for (Map.Entry<Node<T>, Set<Node<T>>> neighbors : adjMap.entrySet()) {
             output.append(neighbors.getKey().getVal()).append(":").append(neighbors.getValue()).append("\n");
         }
         return output.toString();

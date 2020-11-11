@@ -4,43 +4,31 @@ import java.io.*;
 
 public class Main {
 
-    //Part 1: Generate undirected graphs of size n with n^2/2 edges.
-    //Results are printed to file with the name "n_output.txt"
     public static void main(String[] args){
 
-        //UnDiGraph(10, 45);
-        //UnDiGraph(100, 4500);
-        //UnDiGraph(10000, 450000);
-        //UnDiGraph(100000, 4500000);
+    BiPartiteGraph(10, (int)(0.8 * nCr(10,2)));
 
-        //DiGraph(10, 45);
-        //DiGraph(100, 4500);
-        //DiGraph(10000, 450000);
-        //DiGraph(100000, 4500000);
-
-        BiPartiteGraph(10, 45);
-        BiPartiteGraph(100, 4500);
-        BiPartiteGraph(10000, 450000);
-        BiPartiteGraph(100000, 4500000);
-        
     }
 
     //Bi-Partite Graph with edges between even and odd nodes
     public static void BiPartiteGraph(int n, int d) {
         PrintWriter writer;
 
-        Graph<Integer> myGraph = new Graph<>();
+        Graph<Integer> myBipartiteGraph = new Graph<>();
         Map<Integer, Node<Integer>> nodes = new HashMap<>();
         for(Integer i = 0; i < n; i++){
             Node<Integer> node = new Node<>(i);
-            myGraph.addNode(node);
+            myBipartiteGraph.addNode(node);
             nodes.put(i, node);
         }
 
-        for(int j = 0; j < (d/2); j++){
-            myGraph.addDiEdge(nodes.get((int)(Math.random() * (n/2)) * 2), nodes.get((int)(Math.random() * (n/2)) * 2 + 1));
-            myGraph.addDiEdge(nodes.get((int)(Math.random() * (n/2)) * 2 + 1), nodes.get((int)(Math.random() * (n/2)) * 2));
-        }
+        long numEdges = 0;
+        while(numEdges > d/2){
+            int r = (int)(Math.random() * (n)) * 2;
+            int r2 = (int)(Math.random() * (n)) * 2;
+
+            myBipartiteGraph.addDiEdge(nodes.get(r), nodes.get(r2));
+            }
 
         //System.out.println(myGraph.toString());
 
@@ -48,7 +36,7 @@ public class Main {
 
         try {
             writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myGraph.toString());
+            writer.print(myBipartiteGraph.toString());
             writer.close();
         }
         catch (IOException e) {
@@ -57,20 +45,24 @@ public class Main {
     }
 
     //Creates a undirected graph of size n with d number of edges. 
-    //Prints adjecency list output to file.
+    //Prints adjacency list output to file.
     public static void UnDiGraph(int n, int d){
         PrintWriter writer;
 
-        Graph<Integer> myGraph = new Graph<>();
+        Graph<Integer> myUnDiGraph = new Graph<>();
         Map<Integer, Node<Integer>> nodes = new HashMap<>();
         for(Integer i = 0; i < n; i++){
             Node<Integer> node = new Node<>(i);
-            myGraph.addNode(node);
+            myUnDiGraph.addNode(node);
             nodes.put(i, node);
         }
 
-        for(int j = 0; j < d; j++){
-            myGraph.addUnDiEdge(nodes.get((int)(Math.random() * n)), nodes.get((int)(Math.random() * n)));
+        for(int k = 0; k < n; k++) {
+            myUnDiGraph.addUnDiEdge(nodes.get(k), nodes.get((int)(Math.random() * n)));
+        }
+
+        for(int j = 0; j < d - n; j++){
+            myUnDiGraph.addUnDiEdge(nodes.get((int)(Math.random() * n)), nodes.get((int)(Math.random() * n)));
         }
 
         //System.out.println(myGraph.toString());
@@ -79,7 +71,7 @@ public class Main {
 
         try {
             writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myGraph.toString());
+            writer.print(myUnDiGraph.toString());
             writer.close();
         }
         catch (IOException e) {
@@ -88,21 +80,32 @@ public class Main {
     }
 
     //Creates a graph of size n with d number of edges. 
-    //Prints adjecency list output to file.
+    //Prints adjacency list output to file.
     public static void DiGraph(int n, int d){
         PrintWriter writer;
 
-        Graph<Integer> myGraph = new Graph<>();
+        Graph<Integer> myDiGraph = new Graph<>();
         Map<Integer, Node<Integer>> nodes = new HashMap<>();
-        for(Integer i = 0; i < n; i++){
+
+        Node<Integer> zNode = new Node<>(0);
+        myDiGraph.addNode(zNode);
+        nodes.put(0, zNode);
+
+        for(Integer i = 1; i < n; i++){
             Node<Integer> node = new Node<>(i);
-            myGraph.addNode(node);
+            myDiGraph.addNode(node);
             nodes.put(i, node);
         }
 
-        for(int j = 0; j < d; j++){
-            myGraph.addDiEdge(nodes.get((int)(Math.random() * n)), nodes.get((int)(Math.random() * n)));
+        for(int k = 0; k < n; k++) {
+            myDiGraph.addDiEdge(nodes.get(k), nodes.get((int)(Math.random() * n)));
         }
+
+        for(int j = 0; j < d - n; j++){
+            myDiGraph.addDiEdge(nodes.get((int)(Math.random() * n)), nodes.get((int)(Math.random() * n)));
+        }
+
+        myDiGraph.dfs(zNode);
 
         //System.out.println(myGraph.toString());
 
@@ -110,11 +113,15 @@ public class Main {
 
         try {
             writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myGraph.toString());
+            writer.print(myDiGraph.toString());
             writer.close();
         }
         catch (IOException e) {
             System.err.println(e);
         }
     }
+
+    static int nCr(long n, int r) { return (int)(fact(n) / (fact(r) * fact(n - r))); }
+
+    static long fact(long n) { return n <= 1 ? 1 : n*fact(n-1); }
 }
