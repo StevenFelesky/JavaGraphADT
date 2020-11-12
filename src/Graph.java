@@ -3,10 +3,13 @@ import java.util.*;
 public class Graph<T> {
 
     Map<Node<T>, Set<Node<T>>> adjMap;
+    private long numEdges = 0;
 
     public Graph() {
         adjMap = new HashMap<>();
     }
+
+    public long getNumEdges() { return numEdges; }
 
     public boolean addNode(Node<T> node) {
         if (!adjMap.containsKey(node)) {
@@ -21,6 +24,7 @@ public class Graph<T> {
             if(!(adjMap.get(from).contains(to) && adjMap.get(to).contains(from))) {
                 adjMap.get(from).add(to);
                 adjMap.get(to).add(from);
+                numEdges++;
                 return true;
             }
         }
@@ -31,6 +35,7 @@ public class Graph<T> {
         if (adjMap.containsKey(from) && adjMap.containsKey(to)) {
             if(!adjMap.get(from).contains(to)) {
                 adjMap.get(from).add(to);
+                numEdges++;
                 return true;
             }
         }
