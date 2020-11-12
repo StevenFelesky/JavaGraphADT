@@ -2,7 +2,8 @@ import java.util.*;
 
 public class Graph<T> {
 
-    Map<Node<T>, Set<Node<T>>> adjMap;
+    Map<Node<T>, List<Node<T>>> adjMap;
+
     private long numEdges = 0;
 
     public Graph() {
@@ -13,7 +14,7 @@ public class Graph<T> {
 
     public boolean addNode(Node<T> node) {
         if (!adjMap.containsKey(node)) {
-            adjMap.put(node, new HashSet<>());
+            adjMap.put(node, new LinkedList<>());
             return true;
         }
         return false;
@@ -44,9 +45,8 @@ public class Graph<T> {
 
     public void dfs(Node<T> node) {
         node.visit();
-        System.out.print(node.toString());
 
-        Set<Node<T>> neighbors = adjMap.get(node);
+        List<Node<T>> neighbors = adjMap.get(node);
 
         if (neighbors == null) { return; }
 
@@ -57,9 +57,27 @@ public class Graph<T> {
         }
     }
 
+    public void fillOrder(int s, boolean[] visited, Stack stack) {
+        visited[s] = true;
+
+
+    }
+
+    public Graph<T> transpose() {
+        Graph<T> tGraph = new Graph<>();
+
+        for (Node<T> t : this.adjMap.keySet()) {
+            for (Node<T> n : this.adjMap.get(t)) {
+                List<Node<T>> sn = tGraph.adjMap.computeIfAbsent(n, k -> new LinkedList<Node<T>>());
+                sn.add(t);
+            }
+        }
+        return tGraph;
+    }
+
     public boolean everyNodeHasAnEdge() {
-        for (Map.Entry<Node<T>, Set<Node<T>>> entry : adjMap.entrySet()) {
-            Set<Node<T>> neighbors = entry.getValue();
+        for (Map.Entry<Node<T>, List<Node<T>>> entry : adjMap.entrySet()) {
+            List<Node<T>> neighbors = entry.getValue();
             if (neighbors.isEmpty()) { return false; }
         }
         return true;
@@ -67,7 +85,7 @@ public class Graph<T> {
 
     public String toString() {
         StringBuilder output = new StringBuilder("Adjacency List Output\n");
-        for (Map.Entry<Node<T>, Set<Node<T>>> neighbors : adjMap.entrySet()) {
+        for (Map.Entry<Node<T>, List<Node<T>>> neighbors : adjMap.entrySet()) {
             output.append(neighbors.getKey().getVal()).append(":").append(neighbors.getValue()).append("\n");
         }
         return output.toString();

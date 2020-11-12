@@ -24,25 +24,31 @@ public class Main {
         long size10000 = 4 * nCr(tenThousand, BigInteger.TWO).intValue() / 5;
         long size100000 = 4 * nCr(oneHundredThousand, BigInteger.TWO).longValue() / 5;
 
+        System.out.println("Problem 1: Create Undirected Graphs\n");
+
         //Generate the undirected graphs
-        //UnDiGraph(10, size10);
+        UnDiGraph(10, size10);
         //UnDiGraph(100, size100);
         //UnDiGraph(10000, size10000);
-        //Unable to generate a graph of this size. My computer does not have sufficient memory for the Java VM.
+        //Unable to generate a graph of this size. Computer does not have sufficient memory.
         //UnDiGraph(100000, size100000);
 
+        System.out.println("\n");
 
         /*
         Problem 2: Compute the strongly connected components of the graphs below.
         */
 
-        //Generate the undirected graphs
-        //DiGraph(10, size10);
-        //DiGraph(100, size100);
-        //DiGraph(10000, size10000);
-        //Unable to generate this graph. Java VM runs out of memory working with a graph of this size.
-        //DiGraph(100000, size100000);
+        System.out.println("Problem 2: Strongly Connected Components\n");
 
+        //Generate the undirected graphs
+        //StronglyConnectedDiGraph(10, size10);
+        //StronglyConnectedDiGraph(100, size100);
+        //StronglyConnectedDiGraph(10000, size10000);
+        //Unable to generate a graph of this size. Computer does not have sufficient memory.
+        //StronglyConnectedDiGraph(100000, 100000);
+
+        System.out.println("\n");
 
         /*
         Problem 3 :Create/test graphs to see if they are bipartite by enumerating the nodes. I have
@@ -50,15 +56,21 @@ public class Main {
         of an existing graph to test if the graph is bipartite.
         */
 
+        System.out.println("Problem 3: Bipartite Graphs\n");
+
         //Generate bipartite graphs of size nC2.
-        BiPartiteGraph(10, size10);
+        //BiPartiteGraph(10, size10);
         //BiPartiteGraph(100, size100);
         //BiPartiteGraph(10000, size10000);
-        //As stated above, Java VM runs out of memory working with a graph of this size.
+        //Unable to generate a graph of this size. Computer does not have sufficient memory.
         //BiPartiteGraph(100000, size100000);
 
-        //Generate, enumarate and test graphs to check whether they are bipartite.
-
+        //Generate graphs with random edges, enumerate with random values < n, and test graphs to check whether they are bipartite.
+        //EnumerateDiGraphBipartite(10, size10);
+        //EnumarateDiGraphBipartite(100, size100);
+        //EnumarateDiGraphBipartite(10000, size10000);
+        //Unable to generate a graph of this size. Computer does not have sufficient memory.
+        //EnumarateDiGraphBipartite(100000, size100000);
 
     }
 
@@ -66,36 +78,78 @@ public class Main {
     public static void BiPartiteGraph(long n, long d) {
         PrintWriter writer;
 
-        Graph<Long> myBipartiteGraph = new Graph<>();
+        Graph<Long> myGraph = new Graph<>();
         Map<Long, Node<Long>> nodes = new HashMap<>();
 
         for(long i = 0; i < n; i++){
             Node<Long> node = new Node<>(i);
-            myBipartiteGraph.addNode(node);
+            myGraph.addNode(node);
             nodes.put(i, node);
         }
 
-        while(myBipartiteGraph.getNumEdges() < d) {
+        while(myGraph.getNumEdges() < d) {
 
-            boolean b = myBipartiteGraph.addDiEdge(nodes.get(rand(1, n)), nodes.get(rand(2, n)));
+            boolean b = myGraph.addDiEdge(nodes.get(rand(1, n)), nodes.get(rand(2, n)));
             while (!b) {
-                b = myBipartiteGraph.addDiEdge(nodes.get(rand(1, n)), nodes.get(rand(2, n)));
+                b = myGraph.addDiEdge(nodes.get(rand(1, n)), nodes.get(rand(2, n)));
             }
-            boolean b1 = myBipartiteGraph.addDiEdge(nodes.get(rand(2, n)), nodes.get(rand(1, n)));
+            boolean b1 = myGraph.addDiEdge(nodes.get(rand(2, n)), nodes.get(rand(1, n)));
             while (!b1) {
-                b1 = myBipartiteGraph.addDiEdge(nodes.get(rand(2, n)), nodes.get(rand(1, n)));
+                b1 = myGraph.addDiEdge(nodes.get(rand(2, n)), nodes.get(rand(1, n)));
             }
         }
 
-        System.out.println("Every node has an edge: " + myBipartiteGraph.everyNodeHasAnEdge());
-        System.out.println("Graph is bipartite: " + evenOddBipartiteTest(myBipartiteGraph));
-        System.out.println("Number of edges = " + myBipartiteGraph.getNumEdges());
+        System.out.println("Every node has an edge: " + myGraph.everyNodeHasAnEdge());
+        System.out.println("Graph is bipartite: " + evenOddBipartiteTest(myGraph));
+        System.out.println("Number of edges = " + myGraph.getNumEdges());
 
         String name = n + "_BiPartiteGraph_output.txt";
 
         try {
             writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myBipartiteGraph.toString());
+            writer.print(myGraph.toString());
+            writer.close();
+        }
+        catch (IOException e) {
+            System.err.println(e);
+        }
+    }
+
+    public static void EnumerateDiGraphBipartite(long n, long d) {
+        PrintWriter writer;
+
+        Graph<Long> myGraph = new Graph<>();
+        Map<Long, Node<Long>> nodes = new HashMap<>();
+
+        for(long i = 0; i < n; i++){
+            Node<Long> node = new Node<>();
+            myGraph.addNode(node);
+            nodes.put(i, node);
+        }
+
+        for(long k = 0; k < n; k++) {
+            myGraph.addDiEdge(nodes.get(k), nodes.get(n-k));
+        }
+
+        while(myGraph.getNumEdges() < d) {
+            myGraph.addDiEdge(nodes.get(rand(3, n)), nodes.get(rand(3, n)));
+        }
+
+        //Enumerate nodes
+        for (Map.Entry<Node<Long>, List<Node<Long>>> entry : myGraph.adjMap.entrySet()) {
+            Node<Long> node = entry.getKey();
+            node.setVal(rand(3, n));
+        }
+
+        System.out.println("Every node has an edge: " + myGraph.everyNodeHasAnEdge());
+        System.out.println("Graph is bipartite: " + evenOddBipartiteTest(myGraph));
+        System.out.println("Number of edges = " + myGraph.getNumEdges());
+
+        String name = n + "_EnumeratedDiGraphBipartite_output.txt";
+
+        try {
+            writer = new PrintWriter(name, StandardCharsets.UTF_8);
+            writer.print(myGraph.toString());
             writer.close();
         }
         catch (IOException e) {
@@ -108,31 +162,31 @@ public class Main {
     public static void UnDiGraph(long n, long d){
         PrintWriter writer;
 
-        Graph<Long> myUnDiGraph = new Graph<>();
+        Graph<Long> myGraph = new Graph<>();
         Map<Long, Node<Long>> nodes = new HashMap<>();
 
         for(long i = 0; i < n; i++){
             Node<Long> node = new Node<>(i);
-            myUnDiGraph.addNode(node);
+            myGraph.addNode(node);
             nodes.put(i, node);
         }
 
         for(long k = 0; k < n; k++) {
-            myUnDiGraph.addUnDiEdge(nodes.get(k), nodes.get(n-k));
+            myGraph.addUnDiEdge(nodes.get(k), nodes.get(n-k));
         }
 
-        while(myUnDiGraph.getNumEdges() < d) {
-            myUnDiGraph.addUnDiEdge(nodes.get(rand(3, n)), nodes.get(rand(3, n)));
+        while(myGraph.getNumEdges() < d) {
+            myGraph.addUnDiEdge(nodes.get(rand(3, n)), nodes.get(rand(3, n)));
         }
 
-        System.out.println("Every node has an edge: " + myUnDiGraph.everyNodeHasAnEdge());
-        System.out.println("Number of edges = " + myUnDiGraph.getNumEdges());
+        System.out.println("Every node has an edge: " + myGraph.everyNodeHasAnEdge());
+        System.out.println("Number of edges = " + myGraph.getNumEdges());
 
         String name = n + "_UndirectedGraph_output.txt";
 
         try {
             writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myUnDiGraph.toString());
+            writer.print(myGraph.toString());
             writer.close();
         }
         catch (IOException e) {
@@ -145,58 +199,31 @@ public class Main {
     public static void DiGraph(long n, long d){
         PrintWriter writer;
 
-        Graph<Long> myDiGraph = new Graph<>();
+        Graph<Long> myGraph = new Graph<>();
         Map<Long, Node<Long>> nodes = new HashMap<>();
 
         for(long i = 0; i < n; i++){
             Node<Long> node = new Node<>(i);
-            myDiGraph.addNode(node);
+            myGraph.addNode(node);
             nodes.put(i, node);
         }
 
         for(long k = 0; k < n; k++) {
-            myDiGraph.addDiEdge(nodes.get(k), nodes.get(n-k));
+            myGraph.addDiEdge(nodes.get(k), nodes.get(n-k));
         }
 
-        while(myDiGraph.getNumEdges() < d) {
-            myDiGraph.addDiEdge(nodes.get(rand(3, n)), nodes.get(rand(3, n)));
+        while(myGraph.getNumEdges() < d) {
+            myGraph.addDiEdge(nodes.get(rand(3, n)), nodes.get(rand(3, n)));
         }
 
-        System.out.println("Every node has an edge: " + myDiGraph.everyNodeHasAnEdge());
-        System.out.println("Number of edges = " + myDiGraph.getNumEdges());
+        System.out.println("Every node has an edge: " + myGraph.everyNodeHasAnEdge());
+        System.out.println("Number of edges = " + myGraph.getNumEdges());
 
         String name = n + "_DirectedGraph_output.txt";
 
         try {
             writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myDiGraph.toString());
-            writer.close();
-        }
-        catch (IOException e) {
-            System.err.println(e);
-        }
-    }
-
-    //Creates a graph of size n with d number of edges.
-    //Prints adjacency list output to file.
-    public static void NumerateDiGraph(long n, long d){
-        PrintWriter writer;
-
-        Graph<Long> myDiGraph = new Graph<>();
-
-        for(long i = 0; i < n; i++){
-            Node<Long> node = new Node<>(i);
-            myDiGraph.addNode(node);
-        }
-
-        System.out.println("Every node has an edge: " + myDiGraph.everyNodeHasAnEdge());
-        System.out.println("Number of edges = " + myDiGraph.getNumEdges());
-
-        String name = n + "_DirectedGraph_output.txt";
-
-        try {
-            writer = new PrintWriter(name, StandardCharsets.UTF_8);
-            writer.print(myDiGraph.toString());
+            writer.print(myGraph.toString());
             writer.close();
         }
         catch (IOException e) {
@@ -205,9 +232,9 @@ public class Main {
     }
 
     static boolean evenOddBipartiteTest(Graph<Long> graph) {
-        for (Map.Entry<Node<Long>, Set<Node<Long>>> entry : graph.adjMap.entrySet()) {
+        for (Map.Entry<Node<Long>, List<Node<Long>>> entry : graph.adjMap.entrySet()) {
 
-            Set<Node<Long>> neighbors = entry.getValue();
+            List<Node<Long>> neighbors = entry.getValue();
             Node<Long> node = entry.getKey();
 
             if (node.getVal() % 2 == 0) {
