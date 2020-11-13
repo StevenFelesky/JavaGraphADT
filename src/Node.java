@@ -1,3 +1,9 @@
+/*
+Steven Felesky
+11.12.2020
+CSCI 310 GraphADT
+*/
+
 public class Node<T> {
 
     private T val;
@@ -29,5 +35,4 @@ public class Node<T> {
     public String toString() {
         return val.toString();
     }
-
 }
